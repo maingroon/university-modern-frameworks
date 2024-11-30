@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product API Actions</title>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.7/css/pico.min.css">
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+</head>
+<body>
+    <main class="container">
+        <header>
+            <h1>Product Management</h1>
+        </header>
+
+        <!-- Product List -->
+        <section id="product-list" style="margin-top: 2rem;">
+            <h2>Product List</h2>
+            <p>Loading products...</p>
+        </section>
+
+        <!-- Create Product Form -->
+        <section>
+            <h2>Create Product</h2>
+            <form hx-post="/api/products" hx-trigger="submit" hx-on::after-request="fetchProducts()" hx-ext="json-enc" hx-swap="none">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="description">Description:</label>
+                <textarea id="description" name="description"></textarea>
+
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price" step="0.01" required>
+
+                <button type="submit">Create Product</button>
+            </form>
+        </section>
+
+        <!-- Update Product Form -->
+        <section>
+            <h2>Update Product</h2>
+            <form hx-put="/api/products" hx-trigger="submit" hx-on::after-request="fetchProducts()" hx-ext="json-enc" hx-swap="none">
+                <label for="update-id">Product ID:</label>
+                <input type="text" id="update-id" name="id" required>
+
+                <label for="update-name">Name:</label>
+                <input type="text" id="update-name" name="name">
+
+                <label for="update-description">Description:</label>
+                <textarea id="update-description" name="description"></textarea>
+
+                <label for="update-price">Price:</label>
+                <input type="number" id="update-price" name="price" step="0.01">
+
+                <button type="submit">Update Product</button>
+            </form>
+        </section>
+
+        <!-- Delete Product -->
+        <section>
+            <h2>Delete Product</h2>
+            <form hx-delete="/api/products" hx-trigger="submit" hx-on::after-request="fetchProducts()" hx-ext="json-enc" hx-swap="none">
+                <label for="delete-id">Product ID:</label>
+                <input type="text" id="delete-id" name="id" required>
+                <button type="submit">Delete Product</button>
+            </form>
+        </section>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Automatically fetch products on page load
+            fetchProducts();
+        });
+
+        function fetchProducts() {
+            const responseTarget = document.getElementById("product-list");
+            fetch("/api/products")
+                .then(response => response.json())
+                .then(data => {
+                    responseTarget.innerHTML = data.map(product => `
+                        <article>
+                            <h3>${product.name}</h3>
+                            <p><strong>Description:</strong> ${product.description}</p>
+                            <p><strong>Price:</strong> $${product.price.toFixed(2)}</p>
+                            <p><strong>ID:</strong> ${product._id}</p>
+                        </article>
+                    `).join("") || "<p>No products found.</p>";
+                })
+                .catch(error => {
+                    responseTarget.innerHTML = `<p>Error fetching products: ${error.message}</p>`;
+                });
+        }
+    </script>
+</body>
+</html>
