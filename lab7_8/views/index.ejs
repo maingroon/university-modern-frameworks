@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product API Actions</title>
+    <title>Products CRUD</title>
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.7/css/pico.min.css">
     <script src="https://unpkg.com/htmx.org"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
@@ -11,16 +11,14 @@
 <body>
     <main class="container">
         <header>
-            <h1>Product Management</h1>
+            <h1>Products CRUD</h1>
         </header>
 
-        <!-- Product List -->
         <section id="product-list" style="margin-top: 2rem;">
             <h2>Product List</h2>
             <p>Loading products...</p>
         </section>
 
-        <!-- Create Product Form -->
         <section>
             <h2>Create Product</h2>
             <form hx-post="/api/products" hx-trigger="submit" hx-on::after-request="fetchProducts()" hx-ext="json-enc" hx-swap="none">
@@ -37,7 +35,6 @@
             </form>
         </section>
 
-        <!-- Update Product Form -->
         <section>
             <h2>Update Product</h2>
             <form hx-put="/api/products" hx-trigger="submit" hx-on::after-request="fetchProducts()" hx-ext="json-enc" hx-swap="none">
@@ -57,7 +54,6 @@
             </form>
         </section>
 
-        <!-- Delete Product -->
         <section>
             <h2>Delete Product</h2>
             <form hx-delete="/api/products" hx-trigger="submit" hx-on::after-request="fetchProducts()" hx-ext="json-enc" hx-swap="none">
@@ -68,10 +64,7 @@
         </section>
     </main>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Automatically fetch products on page load
-            fetchProducts();
-        });
+        document.addEventListener("DOMContentLoaded", fetchProducts);
 
         function fetchProducts() {
             const responseTarget = document.getElementById("product-list");
